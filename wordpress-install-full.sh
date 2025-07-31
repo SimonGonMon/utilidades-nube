@@ -107,21 +107,18 @@ print_success "Se instalará solo lo necesario para WordPress"
 print_step "PASO 2: Instalando dependencias básicas"
 
 print_info "Instalando Apache2..."
-(apt install -y apache2 > /dev/null 2>&1) &
-show_progress $! "Instalando Apache2"
+apt install -y apache2
 print_success "Apache2 instalado"
 
 print_info "Configurando MySQL Server..."
 export DEBIAN_FRONTEND=noninteractive
 debconf-set-selections <<< "mysql-server mysql-server/root_password password $DB_ROOT_PASS"
 debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $DB_ROOT_PASS"
-(apt install -y mysql-server > /dev/null 2>&1) &
-show_progress $! "Instalando MySQL"
+apt install -y mysql-server
 print_success "MySQL Server instalado"
 
 print_info "Instalando PHP y extensiones necesarias..."
-(apt install -y php libapache2-mod-php php-mysql php-curl php-gd php-xml php-mbstring php-xmlrpc php-zip php-soap php-intl > /dev/null 2>&1) &
-show_progress $! "Instalando PHP"
+apt install -y php libapache2-mod-php php-mysql php-curl php-gd php-xml php-mbstring php-xmlrpc php-zip php-soap php-intl
 print_success "PHP y extensiones instaladas"
 
 print_info "Instalando herramientas básicas..."
@@ -163,8 +160,7 @@ print_success "Usuario '$DB_USER' configurado"
 print_step "PASO 5: Descargando WordPress"
 print_info "Descargando desde wordpress.org..."
 cd /tmp
-(wget -q $WP_URL -O wordpress.tar.gz) &
-show_progress $! "Descargando WordPress"
+wget -q $WP_URL -O wordpress.tar.gz
 print_success "WordPress descargado"
 
 print_info "Extrayendo archivos..."
@@ -192,10 +188,9 @@ sed -i "s/password_here/$DB_PASS/" $WP_DIR/wp-config.php
 
 # Add security keys
 print_info "Generando claves de seguridad..."
-(SALT=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
+SALT=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
 STRING='put your unique phrase here'
-printf '%s\n' "g/$STRING/d" a "$SALT" . w | ed -s $WP_DIR/wp-config.php > /dev/null 2>&1) &
-show_progress $! "Configurando seguridad"
+printf '%s\n' "g/$STRING/d" a "$SALT" . w | ed -s $WP_DIR/wp-config.php > /dev/null 2>&1
 
 print_success "WordPress configurado"
 
